@@ -11,59 +11,59 @@ https://drive.google.com/file/d/1f4ZTjkZ1g1iSUsbKdovoxi220tHADERA/view?usp=drive
 
 ## Before & After Screenshots
 
-### Login Page
+## Login Page
 
 | Before | After |
 |--------|-------|
-| ![Before Login](Projects/Images/before_login.png) | ![After Login](Projects/Images/after_login.png) |
+| ![Before Login](../Images/before_login.png) | ![After Login](../Images/after_login.png) |
 
-### Home Page
-
-| Before | After |
-|--------|-------|
-| ![Before Home](Projects/Images/before_home.png) | ![After Home](Projects/Images/after_home.png) |
-
-### Logout Page
+## Home Page
 
 | Before | After |
 |--------|-------|
-| ![Before Logout](Projects/Images/before_logout.png) | ![After Logout](Projects/Images/after_logout.png) |
+| ![Before Home](../Images/before_home.png) | ![After Home](../Images/after_home.png) |
 
-### Workshop Status
-
-| Before | After |
-|--------|-------|
-| ![Before Status](Projects/Images/before_workshop_status.png) | ![After Status](Projects/Images/after_status.png) |
-
-### Workshop Statistics
+## Logout Page
 
 | Before | After |
 |--------|-------|
-| ![Before Stats](Projects/Images/before_home_stats.png) | ![After Stats](Projects/Images/after_stast.png) |
+| ![Before Logout](../Images/before_logout.png) | ![After Logout](../Images/after_logout.png) |
 
-### Workshop Types
+## Workshop Status
+
+| Before | After |
+|--------|-------|
+| ![Before Status](../Images/before_workshop_status.png) | ![After Status](../Images/after_status.png) |
+
+## Workshop Statistics
+
+| Before | After |
+|--------|-------|
+| ![Before Stats](../Images/before_home_stats.png) | ![After Stats](../Images/after_stast.png) |
+
+## Workshop Types
 
 | After |
 |-------|
-| ![After Workshop Types](Projects/Images/after_workshop_types.png) |
+| ![After Workshop Types](../Images/after_workshop_types.png) |
 
-### Profile Page
-
-| After |
-|-------|
-| ![After Profile](Projects/Images/after_profile.png) |
-
-### Proposed Workshop
+## Profile Page
 
 | After |
 |-------|
-| ![After Proposed Workshop](Projects/Images/after_proposed_workshp.png) |
+| ![After Profile](../Images/after_profile.png) |
 
-### Password Change
+## Proposed Workshop
 
 | After |
 |-------|
-| ![After Password Change](Projects/Images/after_pass_change.png) |
+| ![After Proposed Workshop](../Images/after_proposed_workshp.png) |
+
+## Password Change
+
+| After |
+|-------|
+| ![After Password Change](../Images/after_pass_change.png) |
 
 ---
 
