@@ -1,0 +1,50 @@
+{% extends 'workshop_app/base.html' %}
+
+{% block title %}Logged Out | FOSSEE Workshops{% endblock %}
+
+{% block content %}
+<div class="container">
+<div class="row justify-content-center">
+<div class="col-12 col-sm-10 col-md-6 col-lg-5">
+
+    <div style="background:#fff; border-radius:16px; box-shadow:0 4px 24px rgba(0,0,0,0.08); padding:48px 32px; text-align:center; margin-top:20px;">
+
+        <div style="background:linear-gradient(135deg,#1a1a2e,#16213e); width:80px; height:80px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 24px;">
+            <span class="material-icons" style="color:#f97316; font-size:40px;">lock</span>
+        </div>
+
+        <h3 style="font-weight:700; color:#1a1a2e; margin-bottom:12px;">Logged Out Successfully</h3>
+        <p style="color:#64748b; font-size:0.95rem; margin-bottom:32px; line-height:1.6;">
+            You have been safely logged out of your FOSSEE Workshops account.
+        </p>
+
+        <div style="display:flex; flex-direction:column; gap:12px;">
+            <a href="{% url 'workshop_app:login' %}" style="
+                display:block;
+                padding:12px;
+                background:linear-gradient(135deg,#f97316,#ea580c);
+                color:#fff;
+                border-radius:8px;
+                font-weight:600;
+                font-size:1rem;
+                text-decoration:none;
+            ">Login Again</a>
+
+            <a href="{% url 'workshop_app:register' %}" style="
+                display:block;
+                padding:12px;
+                background:#f1f5f9;
+                color:#1a1a2e;
+                border-radius:8px;
+                font-weight:600;
+                font-size:1rem;
+                text-decoration:none;
+            ">Create New Account</a>
+        </div>
+
+    </div>
+
+</div>
+</div>
+</div>
+{% endblock %}

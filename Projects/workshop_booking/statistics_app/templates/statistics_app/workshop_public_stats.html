@@ -1,0 +1,248 @@
+{% extends 'workshop_app/base.html' %}
+
+{% block title %}Workshop Statistics | FOSSEE Workshops{% endblock %}
+
+{% block content %}
+<div style="padding:0 24px;">
+
+    <!-- Page Header -->
+    <div style="margin-bottom:28px;">
+        <h2 style="font-weight:800; color:#1a1a2e; margin:0;">Workshop Statistics</h2>
+        <p style="color:#64748b; font-size:0.95rem; margin:6px 0 0;">Browse and filter all completed workshops</p>
+    </div>
+
+    <div style="display:flex; gap:24px; align-items:flex-start; flex-wrap:wrap;">
+
+        <!-- Filters Sidebar -->
+<div style="width:320px; min-width:300px;background:#fff; border-radius:16px; box-shadow:0 4px 24px rgba(0,0,0,0.08); overflow:hidden; flex-shrink:0; border:1px solid #f1f5f9;">
+            <div style="background:linear-gradient(135deg,#1a1a2e,#16213e); padding:16px 20px; display:flex; justify-content:space-between; align-items:center;">
+                <h5 style="font-weight:700; color:#fff; margin:0; font-size:1rem;">Filters</h5>
+                <a href="{% url 'statistics_app:public' %}" style="
+                    padding:5px 12px;
+                    background:rgba(255,255,255,0.15);
+                    color:#fff;
+                    border-radius:6px;
+                    font-size:0.82rem;
+                    font-weight:600;
+                    text-decoration:none;
+                    border:1px solid rgba(255,255,255,0.2);
+                ">Clear</a>
+            </div>
+
+            <form method="GET" style="padding:20px;">
+                <div style="margin-bottom:16px;">
+                    <label style="font-weight:600; color:#374151; font-size:0.82rem; display:block; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.4px;">From Date</label>
+                    {{form.from_date}}
+                </div>
+                <div style="margin-bottom:16px;">
+                    <label style="font-weight:600; color:#374151; font-size:0.82rem; display:block; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.4px;">To Date</label>
+                    {{form.to_date}}
+                </div>
+                <div style="margin-bottom:16px;">
+                    <label style="font-weight:600; color:#374151; font-size:0.82rem; display:block; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.4px;">Workshop</label>
+                    {{form.workshop_type}}
+                </div>
+                <div style="margin-bottom:16px;">
+                    <label style="font-weight:600; color:#374151; font-size:0.82rem; display:block; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.4px;">State</label>
+                    {{form.state}}
+                </div>
+                <div style="margin-bottom:16px;">
+                    <label style="font-weight:600; color:#374151; font-size:0.82rem; display:block; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.4px;">Sort By</label>
+                    {{form.sort}}
+                </div>
+                {% if request.user.is_authenticated %}
+                <div style="margin-bottom:16px; padding:10px 12px; background:#f8fafc; border-radius:8px; display:flex; align-items:center; gap:8px;">
+                    {{form.show_workshops}}
+                    <label style="font-size:0.88rem; color:#374151; font-weight:500; margin:0;">{{form.show_workshops.help_text}}</label>
+                </div>
+                {% endif %}
+                <div style="display:flex; flex-direction:column; gap:8px; margin-top:20px;">
+                    <button type="submit" style="
+                        width:100%;
+                        padding:10px;
+                        background:linear-gradient(135deg,#22c55e,#16a34a);
+                        color:#fff;
+                        border:none;
+                        border-radius:8px;
+                        font-weight:700;
+                        font-size:0.9rem;
+                        cursor:pointer;
+                    ">View Results</button>
+                    <button type="submit" name="download" value="download" style="
+                        width:100%;
+                        padding:10px;
+                        background:linear-gradient(135deg,#0ea5e9,#0284c7);
+                        color:#fff;
+                        border:none;
+                        border-radius:8px;
+                        font-weight:700;
+                        font-size:0.9rem;
+                        cursor:pointer;
+                    ">Download CSV</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Main Content -->
+        <div style="flex:1; min-width:0;">
+
+            <!-- Top Bar -->
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+                <div style="display:flex; align-items:center;">
+                    {% include "statistics_app/paginator.html" %}
+                </div>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <button id="state_graph" style="
+                        padding:9px 20px;
+                        background:linear-gradient(135deg,#0ea5e9,#0284c7);
+                        color:#fff;
+                        border:none;
+                        border-radius:8px;
+                        font-weight:700;
+                        font-size:0.88rem;
+                        cursor:pointer;
+                        box-shadow:0 4px 12px rgba(14,165,233,0.3);
+                    ">State Chart</button>
+                    <button id="type_graph" style="
+                        padding:9px 20px;
+                        background:linear-gradient(135deg,#8b5cf6,#7c3aed);
+                        color:#fff;
+                        border:none;
+                        border-radius:8px;
+                        font-weight:700;
+                        font-size:0.88rem;
+                        cursor:pointer;
+                        box-shadow:0 4px 12px rgba(139,92,246,0.3);
+                    ">Workshops Chart</button>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div style="background:#fff; border-radius:16px; box-shadow:0 4px 24px rgba(0,0,0,0.08); overflow:hidden; margin-bottom:16px; border:1px solid #f1f5f9;">
+                <div style="overflow-x:auto;">
+                    <table style="width:100%; border-collapse:collapse;">
+                        <thead>
+                            <tr style="background:linear-gradient(135deg,#1a1a2e,#16213e);">
+                                <th style="padding:14px 16px; text-align:left; font-size:0.8rem; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.6px; white-space:nowrap;">Sr No.</th>
+                                <th style="padding:14px 16px; text-align:left; font-size:0.8rem; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.6px; white-space:nowrap;">Coordinator</th>
+                                <th style="padding:14px 16px; text-align:left; font-size:0.8rem; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.6px; white-space:nowrap;">Institute</th>
+                                <th style="padding:14px 16px; text-align:left; font-size:0.8rem; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.6px; white-space:nowrap;">Instructor</th>
+                                <th style="padding:14px 16px; text-align:left; font-size:0.8rem; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.6px; white-space:nowrap;">Workshop</th>
+                                <th style="padding:14px 16px; text-align:left; font-size:0.8rem; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.6px; white-space:nowrap;">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% csrf_token %}
+                        {% for workshop in objects %}
+                            <tr style="border-bottom:1px solid #f1f5f9; transition:background 0.15s;"
+                                onmouseover="this.style.background='#f8fafc'"
+                                onmouseout="this.style.background='#fff'">
+                                <td style="padding:14px 16px; color:#94a3b8; font-size:0.9rem; font-weight:500;">{{ forloop.counter0|add:objects.start_index }}</td>
+                                <td style="padding:14px 16px; font-weight:700; color:#1a1a2e; font-size:0.9rem;">{{ workshop.coordinator.get_full_name|capfirst }}</td>
+                                <td style="padding:14px 16px; color:#475569; font-size:0.9rem;">{{ workshop.coordinator.profile.institute|capfirst }}</td>
+                                <td style="padding:14px 16px; color:#475569; font-size:0.9rem;">{{ workshop.instructor.get_full_name|capfirst }}</td>
+                                <td style="padding:14px 16px;">
+                                    <span style="background:#fff7ed; color:#f97316; padding:4px 12px; border-radius:20px; font-size:0.82rem; font-weight:700; border:1px solid #fed7aa;">
+                                        {{ workshop.workshop_type.name }}
+                                    </span>
+                                </td>
+                                <td style="padding:14px 16px; color:#64748b; font-size:0.9rem; white-space:nowrap; font-weight:500;">{{ workshop.date|date }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="6" style="padding:64px 20px; text-align:center;">
+                                    <span class="material-icons" style="font-size:48px; display:block; margin-bottom:12px; color:#cbd5e1;">search_off</span>
+                                    <p style="color:#94a3b8; font-size:1rem; margin:0; font-weight:500;">No workshops found for the selected filters.</p>
+                                    <p style="color:#cbd5e1; font-size:0.88rem; margin:6px 0 0;">Try adjusting your filters or clear them.</p>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Bottom Pagination -->
+            <div style="display:flex; align-items:center;">
+                {% include "statistics_app/paginator.html" %}
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Chart Modal -->
+<div id="dialog" title="Workshop Statistics" style="display:none;">
+    <canvas id="myChart"></canvas>
+</div>
+
+<style>
+input[type="date"], select {
+    width:100%;
+    padding:9px 12px;
+    border:1.5px solid #e2e8f0;
+    border-radius:8px;
+    font-size:0.9rem;
+    color:#1a1a2e;
+    outline:none;
+    background:#f8fafc;
+    transition:border-color 0.2s;
+}
+input[type="date"]:focus, select:focus {
+    border-color:#f97316;
+    box-shadow:0 0 0 3px rgba(249,115,22,0.12);
+    background:#fff;
+}
+input[type="checkbox"] {
+    width:16px;
+    height:16px;
+    accent-color:#f97316;
+    cursor:pointer;
+}
+@media (max-width:900px) {
+    div[style*="width:240px"] {
+        width:100% !important;
+        min-width:unset !important;
+    }
+}
+</style>
+
+<script type="text/javascript">
+    var state_labels = {{ws_states|safe}};
+    var state_data = {{ws_count|safe}};
+    var type_labels = {{ws_type|safe}};
+    var type_data = {{ws_type_count|safe}};
+    var chart;
+
+    $("#state_graph").on("click", function() {
+        show_graph(state_labels, state_data, "State wise workshops");
+    });
+    $("#type_graph").on("click", function() {
+        show_graph(type_labels, type_data, "Type wise workshops");
+    });
+
+    function show_graph(labels, data, graph_name) {
+        var ctx = document.getElementById('myChart').getContext('2d');
+        if(chart) chart.destroy();
+        chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    label: graph_name,
+                    backgroundColor: 'rgba(249,115,22,0.7)',
+                    borderColor: 'rgb(249,115,22)',
+                    borderWidth: 2,
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: { yAxes: [{ ticks: { beginAtZero: true } }] }
+            }
+        });
+        $("#dialog").dialog({ width:900, height:500 });
+    }
+</script>
+
+{% endblock %}

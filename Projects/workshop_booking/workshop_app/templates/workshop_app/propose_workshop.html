@@ -1,0 +1,204 @@
+{% extends "workshop_app/base.html" %}
+{% load static %}
+
+{% block title %}Propose a Workshop | FOSSEE Workshops{% endblock %}
+
+{% block extra-dependencies %}
+    <link rel="stylesheet" href="{% static 'workshop_app/css/jquery-ui.css' %}" type="text/css"/>
+    <script src="{% static 'workshop_app/js/jquery-1.12.4.js' %}"></script>
+    <script src="{% static 'workshop_app/js/jquery-ui.min.js' %}"></script>
+{% endblock %}
+
+{% block extra-custom-scripts %}
+<script>
+    var dateToday = new Date();
+    var upto = new Date();
+    dateToday.setDate(dateToday.getDate() + 3);
+    upto.setFullYear(dateToday.getFullYear() + 1);
+
+    $(function () {
+        $(".datepicker").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            minDate: dateToday,
+            maxDate: upto,
+            beforeShowDay: $.datepicker.noWeekends,
+        });
+
+        $('#disp_tnc').click(function (e) {
+            e.preventDefault()
+            if ($('#id_workshop_type').val() === '')
+                $('.modal-body').html("<p style='color:#ef4444'>Please select a workshop type first</p>")
+            else {
+                $.ajax({
+                    url: '/workshop/type_tnc/' + $('#id_workshop_type').val(),
+                    success: function (data) {
+                        $('.modal-body').html(data.tnc)
+                    }
+                })
+            }
+        })
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+<div class="row justify-content-center">
+<div class="col-12 col-sm-10 col-md-7 col-lg-6">
+
+    <!-- Info Banner -->
+    <div style="
+        background:#fff7ed;
+        border:1.5px solid #fed7aa;
+        border-radius:10px;
+        padding:14px 18px;
+        margin-bottom:24px;
+        display:flex;
+        align-items:flex-start;
+        gap:10px;
+    ">
+        <span class="material-icons" style="color:#f97316; font-size:20px; margin-top:2px">info</span>
+        <p style="margin:0; color:#92400e; font-size:0.9rem;">
+            Before proposing, please check the
+            <a href="{% url 'workshop_app:workshop_type_list' %}" style="color:#f97316; font-weight:600;">
+                Workshop Types
+            </a>
+            section to learn about available workshops.
+        </p>
+    </div>
+
+    <!-- Card -->
+    <div style="background:#fff; border-radius:16px; box-shadow:0 4px 24px rgba(0,0,0,0.08); overflow:hidden; margin-bottom:40px;">
+
+        <!-- Card Header -->
+        <div style="background:linear-gradient(135deg,#1a1a2e,#16213e); padding:20px 28px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+                <span class="material-icons" style="color:#f97316; font-size:28px">event_available</span>
+                <div>
+                    <h4 style="color:#fff; font-weight:700; margin:0">Propose a Workshop</h4>
+                    <p style="color:#94a3b8; font-size:0.85rem; margin:4px 0 0">
+                        Fill in the details to request a workshop
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Body -->
+        <div style="padding:28px;">
+
+            <!-- Errors -->
+            {% if form.errors %}
+            <div style="background:#fef2f2; border:1.5px solid #fecaca; border-radius:10px; padding:16px; margin-bottom:20px;">
+                <p style="color:#ef4444; font-weight:600; margin:0 0 8px;">
+                    <i class="fa fa-exclamation-circle"></i> Please fix the following errors:
+                </p>
+                {% for field in form %}
+                    {% for error in field.errors %}
+                    <p style="color:#ef4444; font-size:0.88rem; margin:4px 0;">• {{ field.label }}: {{ error }}</p>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+
+                <!-- Workshop Type -->
+                <div class="form-group mb-4">
+                    <label style="font-weight:600; color:#1a1a2e; font-size:0.9rem; display:block; margin-bottom:8px;">
+                        Workshop Type <span style="color:#ef4444">*</span>
+                    </label>
+                    {{ form.workshop_type }}
+                </div>
+
+                <!-- Date -->
+                <div class="form-group mb-4">
+                    <label style="font-weight:600; color:#1a1a2e; font-size:0.9rem; display:block; margin-bottom:8px;">
+                        Preferred Date <span style="color:#ef4444">*</span>
+                    </label>
+                    {{ form.date }}
+                    <small style="color:#94a3b8; font-size:0.8rem; margin-top:6px; display:block;">
+                         Weekends not available. Minimum 3 days from today.
+                    </small>
+                </div>
+
+                <!-- Terms -->
+                <div style="background:#f8fafc; border-radius:10px; padding:16px; margin-bottom:24px; display:flex; align-items:center; gap:10px;">
+                    {{ form.tnc_accepted }}
+                    <label style="margin:0; font-size:0.9rem; color:#1a1a2e;">
+                        I accept the
+                        <a href="#" id="disp_tnc" data-toggle="modal" data-target="#tncModal"
+                           style="color:#f97316; font-weight:600; text-decoration:none;">
+                            Terms and Conditions
+                        </a>
+                    </label>
+                </div>
+
+                <!-- Submit -->
+                <button type="submit" style="
+                    width:100%;
+                    padding:12px;
+                    background:linear-gradient(135deg,#f97316,#ea580c);
+                    color:#fff;
+                    border:none;
+                    border-radius:8px;
+                    font-size:1rem;
+                    font-weight:600;
+                    cursor:pointer;
+                    transition:opacity 0.2s;
+                "
+                onmouseover="this.style.opacity='0.9'"
+                onmouseout="this.style.opacity='1'">
+                    Submit Proposal
+                </button>
+            </form>
+        </div>
+    </div>
+
+</div>
+</div>
+</div>
+
+<!-- Terms Modal -->
+<div class="modal fade" id="tncModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div style="background:#fff; border-radius:16px; overflow:hidden; box-shadow:0 8px 32px rgba(0,0,0,0.15);">
+            <div style="background:linear-gradient(135deg,#1a1a2e,#16213e); padding:16px 24px; display:flex; justify-content:space-between; align-items:center;">
+                <h5 style="color:#fff; margin:0; font-weight:700;">Terms and Conditions</h5>
+                <button type="button" class="close" data-dismiss="modal" style="color:#fff; opacity:1; font-size:1.4rem;">
+                    &times;
+                </button>
+            </div>
+            <div class="modal-body" style="padding:24px; color:#1a1a2e; font-size:0.95rem; line-height:1.6;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+select, input[type="text"] {
+    width:100%;
+    padding:10px 14px;
+    border:1.5px solid #e2e8f0;
+    border-radius:8px;
+    font-size:0.95rem;
+    color:#1a1a2e;
+    outline:none;
+    background:#f8fafc;
+    transition:border-color 0.2s;
+}
+select:focus, input[type="text"]:focus {
+    border-color:#f97316;
+    box-shadow:0 0 0 3px rgba(249,115,22,0.15);
+    background:#fff;
+}
+input[type="checkbox"] {
+    width:18px;
+    height:18px;
+    accent-color:#f97316;
+    cursor:pointer;
+}
+</style>
+
+{% endblock %}

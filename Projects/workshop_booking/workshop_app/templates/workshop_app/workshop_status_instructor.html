@@ -1,0 +1,169 @@
+{% extends "workshop_app/base.html" %}
+{% load static %}
+
+{% block title %}Workshop Status | FOSSEE Workshops{% endblock %}
+
+{% block extra-dependencies %}
+    <link rel="stylesheet" href="{% static 'workshop_app/css/jquery-ui.css' %}" type="text/css"/>
+    <script src="{% static 'workshop_app/js/jquery-1.12.4.js' %}"></script>
+    <script src="{% static 'workshop_app/js/jquery-ui.min.js' %}"></script>
+{% endblock %}
+
+{% block extra-custom-scripts %}
+    {% load static %}
+    <script src="{% static 'workshop_app/js/datepicker.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+
+{% if not workshops %}
+
+    <!-- Welcome Empty State -->
+    <div style="background:#fff; border-radius:16px; box-shadow:0 4px 24px rgba(0,0,0,0.08); padding:48px 32px; text-align:center; margin-top:20px;">
+        <span class="material-icons" style="font-size:64px; color:#f97316">assignment</span>
+        <h2 style="font-weight:700; color:#1a1a2e; margin-top:16px">
+            Welcome, {{ user.first_name }}! 👋
+        </h2>
+        <p style="color:#64748b; font-size:0.95rem; max-width:480px; margin:12px auto 0;">
+            Your workshop information will appear here. Browse the
+            <a href="{% url 'workshop_app:workshop_type_list' %}" style="color:#f97316; font-weight:600;">
+                Workshop List
+            </a>
+            and accept workshops based on your expertise and availability.
+        </p>
+    </div>
+
+{% else %}
+
+    <!-- Page Header -->
+    <div style="margin-bottom:28px;">
+        <h3 style="font-weight:700; color:#1a1a2e; margin:0">Workshop Status</h3>
+        <p style="color:#64748b; font-size:0.9rem; margin:4px 0 0">
+            Manage and track all workshop requests
+        </p>
+    </div>
+
+    <!-- Accepted Workshops -->
+    <div style="background:#fff; border-radius:16px; box-shadow:0 4px 24px rgba(0,0,0,0.08); margin-bottom:24px; overflow:hidden;">
+
+        <div style="padding:16px 24px; border-bottom:1px solid #f1f5f9; display:flex; align-items:center; gap:10px;">
+            <span style="width:10px; height:10px; background:#22c55e; border-radius:50%; display:inline-block;"></span>
+            <h5 style="font-weight:700; color:#1a1a2e; margin:0">Accepted Workshops</h5>
+        </div>
+
+        <div style="padding:16px 24px;">
+            <div style="display:flex; flex-direction:column; gap:12px;">
+            {% for workshop in workshops %}
+                {% if workshop.status %}
+                <div style="background:#f8fafc; border-radius:10px; padding:16px; border-left:4px solid #22c55e;">
+                    <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+                        <div>
+                            <a href="{% url 'workshop_app:workshop_details' workshop.id %}"
+                               style="font-weight:700; color:#1a1a2e; text-decoration:none; font-size:0.95rem;">
+                                {{ workshop.workshop_type|capfirst }}
+                            </a>
+                            <p style="color:#64748b; font-size:0.85rem; margin:6px 0 0;">
+                                👤 <a href="{% url 'workshop_app:view_profile' workshop.coordinator.id %}"
+                                      style="color:#f97316; font-weight:600; text-decoration:none;">
+                                    {{ workshop.coordinator.get_full_name }}
+                                </a>
+                                &nbsp;·&nbsp;
+                                {{ workshop.coordinator.profile.institute }}
+                            </p>
+                            <p style="color:#64748b; font-size:0.85rem; margin:4px 0 0;">
+                                {{ workshop.date|date }}
+                                {% if workshop.date > today %}
+                                <span
+                                    class="material-icons"
+                                    style="font-size:16px; color:#f97316; vertical-align:middle; cursor:pointer;"
+                                    data-toggle="popinfo"
+                                    title="Change Date"
+                                    onclick="changeDate('R,{{ workshop.date|safe }}, {{ forloop.counter }}')">
+                                    edit
+                                </span>
+                                <div class="myDialogR{{ forloop.counter }}" style="display:none;" title="Select New Date">
+                                    <form method="post" action="{% url 'workshop_app:change_workshop_date' workshop.id %}">
+                                        <input type="text" placeholder="New date" name="new_date"
+                                               class="rDate{{ forloop.counter }}"
+                                               style="padding:8px; border:1.5px solid #e2e8f0; border-radius:6px; width:100%; margin-bottom:8px;"/>
+                                        {% csrf_token %}
+                                        <button style="padding:6px 16px; background:#f97316; color:#fff; border:none; border-radius:6px; cursor:pointer;">
+                                            Save
+                                        </button>
+                                    </form>
+                                </div>
+                                {% endif %}
+                            </p>
+                        </div>
+                        <span style="background:#dcfce7; color:#16a34a; padding:4px 14px; border-radius:20px; font-size:0.82rem; font-weight:600; height:fit-content;">
+                            {{ workshop.get_status }}
+                        </span>
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Proposed Workshops -->
+    <div style="background:#fff; border-radius:16px; box-shadow:0 4px 24px rgba(0,0,0,0.08); margin-bottom:40px; overflow:hidden;">
+
+        <div style="padding:16px 24px; border-bottom:1px solid #f1f5f9; display:flex; align-items:center; gap:10px;">
+            <span style="width:10px; height:10px; background:#f97316; border-radius:50%; display:inline-block;"></span>
+            <h5 style="font-weight:700; color:#1a1a2e; margin:0">Proposed by Coordinators</h5>
+        </div>
+
+        <div style="padding:16px 24px;">
+            {% csrf_token %}
+            <div style="display:flex; flex-direction:column; gap:12px;">
+            {% for workshop in workshops %}
+                {% if not workshop.status and workshop.tnc_accepted %}
+                <div style="background:#f8fafc; border-radius:10px; padding:16px; border-left:4px solid #f97316;">
+                    <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px; align-items:center;">
+                        <div>
+                            <p style="font-weight:700; color:#1a1a2e; margin:0; font-size:0.95rem;">
+                                {{ workshop.workshop_type }}
+                            </p>
+                            <p style="color:#64748b; font-size:0.85rem; margin:6px 0 0;">
+                                 <a href="{% url 'workshop_app:view_profile' workshop.coordinator.id %}"
+                                      style="color:#f97316; font-weight:600; text-decoration:none;">
+                                    {{ workshop.coordinator.get_full_name }}
+                                </a>
+                                &nbsp;·&nbsp;
+                                 {{ workshop.coordinator.profile.institute }}
+                            </p>
+                            <p style="color:#64748b; font-size:0.85rem; margin:4px 0 0;">
+                                 {{ workshop.date|date }}
+                            </p>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                            <span style="background:#fff7ed; color:#f97316; padding:4px 14px; border-radius:20px; font-size:0.82rem; font-weight:600;">
+                                {{ workshop.get_status }}
+                            </span>
+                            <a href="{% url 'workshop_app:accept_workshop' workshop.id %}"
+                               onclick="return confirm('Once accepted you cannot reject. You have to personally contact the Coordinator if the workshop is to be cancelled. Are you sure?')"
+                               style="
+                                padding:8px 18px;
+                                background:linear-gradient(135deg,#22c55e,#16a34a);
+                                color:#fff;
+                                border-radius:8px;
+                                font-weight:600;
+                                font-size:0.85rem;
+                                text-decoration:none;
+                               ">
+                                ✓ Accept
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+            </div>
+        </div>
+    </div>
+
+{% endif %}
+</div>
+{% endblock %}

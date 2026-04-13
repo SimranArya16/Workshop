@@ -1,0 +1,134 @@
+{% extends 'workshop_app/base.html' %}
+
+{% block title %}Register | FOSSEE Workshops{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-6">
+
+            <!-- Header -->
+            <div class="text-center mb-4 mt-3">
+                <span class="material-icons" style="font-size:48px; color:#f97316">person_add</span>
+                <h2 style="font-weight:700; color:#1a1a2e; margin-top:8px">Create Account</h2>
+                <p style="color:#64748b; font-size:0.95rem">Register as a Workshop Coordinator</p>
+            </div>
+
+            <!-- Card -->
+            <div style="background:#ffffff; border-radius:16px; box-shadow:0 4px 24px rgba(0,0,0,0.08); padding:32px; margin-bottom:40px;">
+
+                <form action="" method="post">
+                    {% csrf_token %}
+
+                    {% for field in form %}
+                    <div class="form-group mb-3">
+
+                        <!-- Label -->
+                        <label for="{{ field.id_for_label }}" style="
+                            font-weight:600;
+                            color:#1a1a2e;
+                            font-size:0.9rem;
+                            margin-bottom:6px;
+                            display:block;
+                        ">
+                            {{ field.label }}
+                            {% if field.field.required %}
+                                <span style="color:#ef4444">*</span>
+                            {% endif %}
+                        </label>
+
+                        <!-- Input -->
+                        {{ field }}
+
+                        <!-- Help text -->
+                        {% if field.help_text %}
+                        <small style="color:#94a3b8; font-size:0.8rem; margin-top:4px; display:block">
+                            {{ field.help_text }}
+                        </small>
+                        {% endif %}
+
+                        <!-- Errors -->
+                        {% if field.errors %}
+                            {% for error in field.errors %}
+                            <small style="color:#ef4444; font-size:0.85rem; margin-top:4px; display:block">
+                                <i class="fa fa-exclamation-circle"></i> {{ error }}
+                            </small>
+                            {% endfor %}
+                        {% endif %}
+
+                    </div>
+                    {% endfor %}
+
+                    <!-- Submit -->
+                    <button type="submit" style="
+                        width:100%;
+                        padding:12px;
+                        background:linear-gradient(135deg,#f97316,#ea580c);
+                        color:#fff;
+                        border:none;
+                        border-radius:8px;
+                        font-size:1rem;
+                        font-weight:600;
+                        cursor:pointer;
+                        margin-top:8px;
+                        transition:opacity 0.2s;
+                    "
+                    onmouseover="this.style.opacity='0.9'"
+                    onmouseout="this.style.opacity='1'">
+                        Create Account
+                    </button>
+
+                </form>
+
+                <!-- Login link -->
+                <div style="text-align:center; margin-top:20px;">
+                    <span style="color:#64748b; font-size:0.9rem">Already have an account?</span>
+                    <a href="{% url 'workshop_app:login' %}" style="
+                        color:#f97316;
+                        font-weight:600;
+                        font-size:0.9rem;
+                        text-decoration:none;
+                        margin-left:6px;
+                    ">Sign in</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Style all form inputs */
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    select,
+    textarea {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        color: #1a1a2e;
+        transition: border-color 0.2s;
+        outline: none;
+        margin-top: 4px;
+        background: #f8fafc;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+        border-color: #f97316;
+        box-shadow: 0 0 0 3px rgba(249,115,22,0.15);
+        background: #fff;
+    }
+
+    textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+</style>
+
+{% endblock %}

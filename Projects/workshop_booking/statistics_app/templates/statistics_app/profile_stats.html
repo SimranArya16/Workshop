@@ -1,0 +1,168 @@
+{% extends 'workshop_app/base.html' %}
+
+{% block title %}Profile Statistics | FOSSEE Workshops{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <!-- Page Header -->
+    <div style="margin-bottom:28px;">
+        <h2 style="font-weight:800; color:#1a1a2e; margin:0;">Profile Statistics</h2>
+        <p style="color:#64748b; font-size:0.95rem; margin:6px 0 0;">View instructor and coordinator statistics</p>
+    </div>
+
+    <!-- Toggle Buttons -->
+    <div style="display:flex; gap:12px; margin-bottom:24px; flex-wrap:wrap;">
+        <button id="btn-instructor" onclick="showTab('instructor')" style="
+            padding:10px 24px;
+            background:linear-gradient(135deg,#1a1a2e,#16213e);
+            color:#fff;
+            border:none;
+            border-radius:8px;
+            font-weight:600;
+            font-size:0.9rem;
+            cursor:pointer;
+        ">Instructor Statistics</button>
+
+        <button id="btn-coordinator" onclick="showTab('coordinator')" style="
+            padding:10px 24px;
+            background:#f1f5f9;
+            color:#1a1a2e;
+            border:none;
+            border-radius:8px;
+            font-weight:600;
+            font-size:0.9rem;
+            cursor:pointer;
+        ">Coordinator Statistics</button>
+    </div>
+
+    <!-- Instructor Table -->
+    <div id="instructor_data">
+        <div style="background:#fff; border-radius:16px; box-shadow:0 4px 24px rgba(0,0,0,0.08); overflow:hidden; margin-bottom:32px;">
+            <div style="background:linear-gradient(135deg,#1a1a2e,#16213e); padding:16px 24px;">
+                <h5 style="color:#fff; font-weight:700; margin:0;">Instructor Statistics</h5>
+            </div>
+            <div style="overflow-x:auto;">
+                <table style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:#f8fafc; border-bottom:2px solid #f1f5f9;">
+                            <th style="padding:14px 16px; text-align:left; font-size:0.8rem; font-weight:700; color:#64748b; text-transform:uppercase; white-space:nowrap;">Sr No.</th>
+                            <th style="padding:14px 16px; text-align:left; font-size:0.8rem; font-weight:700; color:#64748b; text-transform:uppercase; white-space:nowrap;">Username</th>
+                            <th style="padding:14px 16px; text-align:left; font-size:0.8rem; font-weight:700; color:#64748b; text-transform:uppercase; white-space:nowrap;">Full Name</th>
+                            <th style="padding:14px 16px; text-align:left; font-size:0.8rem; font-weight:700; color:#64748b; text-transform:uppercase; white-space:nowrap;">Institute</th>
+                            <th style="padding:14px 16px; text-align:left; font-size:0.8rem; font-weight:700; color:#64748b; text-transform:uppercase; white-space:nowrap;">Phone</th>
+                            <th style="padding:14px 16px; text-align:left; font-size:0.8rem; font-weight:700; color:#64748b; text-transform:uppercase; white-space:nowrap;">Workshops</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% csrf_token %}
+                    {% for profile_data in instructor_data %}
+                        <tr style="border-bottom:1px solid #f1f5f9;"
+                            onmouseover="this.style.background='#f8fafc'"
+                            onmouseout="this.style.background='#fff'">
+                            <td style="padding:14px 16px; color:#94a3b8; font-size:0.9rem;">{{ forloop.counter }}</td>
+                            <td style="padding:14px 16px; font-weight:600; color:#1a1a2e; font-size:0.9rem;">{{ profile_data.profile.user }}</td>
+                            <td style="padding:14px 16px; color:#475569; font-size:0.9rem;">{{ profile_data.profile.user.first_name }} {{ profile_data.profile.user.last_name }}</td>
+                            <td style="padding:14px 16px; color:#475569; font-size:0.9rem;">{{ profile_data.profile.institute }}</td>
+                            <td style="padding:14px 16px; color:#475569; font-size:0.9rem;">{{ profile_data.profile.phone_number }}</td>
+                            <td style="padding:14px 16px;">
+                                <span style="background:#fff7ed; color:#f97316; padding:4px 12px; border-radius:20px; font-size:0.82rem; font-weight:700;">
+                                    {{ profile_data.count }}
+                                </span>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="6" style="padding:48px; text-align:center; color:#94a3b8;">
+                                <span class="material-icons" style="font-size:40px; display:block; margin-bottom:8px; color:#cbd5e1;">person_off</span>
+                                No instructor data available.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Coordinator Table -->
+    <div id="coordinator_data" style="display:none;">
+        <div style="background:#fff; border-radius:16px; box-shadow:0 4px 24px rgba(0,0,0,0.08); overflow:hidden; margin-bottom:32px;">
+            <div style="background:linear-gradient(135deg,#f97316,#ea580c); padding:16px 24px;">
+                <h5 style="color:#fff; font-weight:700; margin:0;">Coordinator Statistics</h5>
+            </div>
+            <div style="overflow-x:auto;">
+                <table style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:#f8fafc; border-bottom:2px solid #f1f5f9;">
+                            <th style="padding:14px 16px; text-align:left; font-size:0.8rem; font-weight:700; color:#64748b; text-transform:uppercase; white-space:nowrap;">Sr No.</th>
+                            <th style="padding:14px 16px; text-align:left; font-size:0.8rem; font-weight:700; color:#64748b; text-transform:uppercase; white-space:nowrap;">Name</th>
+                            <th style="padding:14px 16px; text-align:left; font-size:0.8rem; font-weight:700; color:#64748b; text-transform:uppercase; white-space:nowrap;">Institute</th>
+                            <th style="padding:14px 16px; text-align:left; font-size:0.8rem; font-weight:700; color:#64748b; text-transform:uppercase; white-space:nowrap;">Phone</th>
+                            <th style="padding:14px 16px; text-align:left; font-size:0.8rem; font-weight:700; color:#64748b; text-transform:uppercase; white-space:nowrap;">Joined</th>
+                            <th style="padding:14px 16px; text-align:left; font-size:0.8rem; font-weight:700; color:#64748b; text-transform:uppercase; white-space:nowrap;">Workshops</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% csrf_token %}
+                    {% for profile_data in coordinator_data %}
+                        {% if profile_data.count > 0 %}
+                        <tr style="border-bottom:1px solid #f1f5f9;"
+                            onmouseover="this.style.background='#f8fafc'"
+                            onmouseout="this.style.background='#fff'">
+                            <td style="padding:14px 16px; color:#94a3b8; font-size:0.9rem;">{{ forloop.counter }}</td>
+                            <td style="padding:14px 16px; font-weight:600; color:#1a1a2e; font-size:0.9rem;">
+                                {{ profile_data.profile.user.get_full_name }}
+                            </td>
+                            <td style="padding:14px 16px; color:#475569; font-size:0.9rem;">{{ profile_data.profile.institute }}</td>
+                            <td style="padding:14px 16px; color:#475569; font-size:0.9rem;">{{ profile_data.profile.phone_number }}</td>
+                            <td style="padding:14px 16px; color:#475569; font-size:0.9rem; white-space:nowrap;">{{ profile_data.profile.user.date_joined|date }}</td>
+                            <td style="padding:14px 16px;">
+                                <span style="background:#fff7ed; color:#f97316; padding:4px 12px; border-radius:20px; font-size:0.82rem; font-weight:700;">
+                                    {{ profile_data.count }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endif %}
+                    {% empty %}
+                        <tr>
+                            <td colspan="6" style="padding:48px; text-align:center; color:#94a3b8;">
+                                <span class="material-icons" style="font-size:40px; display:block; margin-bottom:8px; color:#cbd5e1;">person_off</span>
+                                No coordinator data available.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+function showTab(tab) {
+    var instrData = document.getElementById('instructor_data');
+    var coordData = document.getElementById('coordinator_data');
+    var btnInstr = document.getElementById('btn-instructor');
+    var btnCoord = document.getElementById('btn-coordinator');
+
+    if (tab === 'instructor') {
+        instrData.style.display = 'block';
+        coordData.style.display = 'none';
+        btnInstr.style.background = 'linear-gradient(135deg,#1a1a2e,#16213e)';
+        btnInstr.style.color = '#fff';
+        btnCoord.style.background = '#f1f5f9';
+        btnCoord.style.color = '#1a1a2e';
+    } else {
+        instrData.style.display = 'none';
+        coordData.style.display = 'block';
+        btnCoord.style.background = 'linear-gradient(135deg,#f97316,#ea580c)';
+        btnCoord.style.color = '#fff';
+        btnInstr.style.background = '#f1f5f9';
+        btnInstr.style.color = '#1a1a2e';
+    }
+}
+</script>
+
+{% endblock %}

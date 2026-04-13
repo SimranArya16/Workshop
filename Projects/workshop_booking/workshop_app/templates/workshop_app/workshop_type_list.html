@@ -1,0 +1,157 @@
+{% extends 'workshop_app/base.html' %}
+{% load custom_filters %}
+
+{% block title %}Workshop Types | FOSSEE Workshops{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <!-- Page Header -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; flex-wrap:wrap; gap:12px;">
+        <div>
+            <h2 style="font-weight:800; color:#1a1a2e; margin:0;">Workshop Types</h2>
+            <p style="color:#64748b; font-size:0.95rem; margin:6px 0 0;">Browse all available workshop programs</p>
+        </div>
+        {% if request.user|has_group:"instructor" %}
+        <a href="{% url 'workshop_app:add_workshop_type' %}" style="text-decoration:none;">
+            <button style="
+                padding:10px 22px;
+                background:linear-gradient(135deg,#f97316,#ea580c);
+                color:#fff;
+                border:none;
+                border-radius:8px;
+                font-weight:700;
+                font-size:0.9rem;
+                cursor:pointer;
+                box-shadow:0 4px 12px rgba(249,115,22,0.3);
+            ">+ Add Workshop Type</button>
+        </a>
+        {% endif %}
+    </div>
+
+    <!-- Workshop Cards Grid -->
+    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:24px; margin-bottom:32px;">
+        {% for w in workshop_type %}
+        <div style="
+            background:#ffffff;
+            border-radius:16px;
+            box-shadow:0 4px 20px rgba(0,0,0,0.08);
+            padding:28px;
+            transition:transform 0.2s, box-shadow 0.2s;
+            border:1px solid #f1f5f9;
+            border-top:4px solid #f97316;
+        "
+        onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 32px rgba(0,0,0,0.12)'"
+        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 20px rgba(0,0,0,0.08)'">
+
+            <!-- Number badge -->
+            <div style="
+                display:inline-block;
+                background:#fff7ed;
+                color:#f97316;
+                font-weight:700;
+                font-size:0.82rem;
+                padding:4px 12px;
+                border-radius:20px;
+                margin-bottom:14px;
+                border:1px solid #fed7aa;
+            ">#{{ forloop.counter }}</div>
+
+            <!-- Workshop Name -->
+            <h5 style="font-weight:700; color:#1a1a2e; margin-bottom:10px; font-size:1.1rem; line-height:1.4;">
+                {{ w.name }}
+            </h5>
+
+            <!-- Duration -->
+            <div style="display:flex; align-items:center; gap:6px; margin-bottom:20px; background:#f8fafc; padding:8px 12px; border-radius:8px;">
+                <span class="material-icons" style="font-size:16px; color:#f97316;">schedule</span>
+                <span style="color:#475569; font-size:0.9rem; font-weight:500;">
+                    {{ w.duration }} day{{ w.duration|pluralize }} duration
+                </span>
+            </div>
+
+            <!-- Action Button -->
+            <a href="{% url 'workshop_app:workshop_type_details' w.id %}" style="
+                display:block;
+                text-align:center;
+                padding:10px;
+                background:linear-gradient(135deg,#1a1a2e,#16213e);
+                color:#fff;
+                border-radius:8px;
+                font-weight:600;
+                font-size:0.9rem;
+                text-decoration:none;
+                transition:opacity 0.2s;
+            "
+            onmouseover="this.style.opacity='0.85'"
+            onmouseout="this.style.opacity='1'">
+                View Details
+            </a>
+
+        </div>
+        {% empty %}
+        <div style="
+            grid-column:1/-1;
+            text-align:center;
+            padding:60px 20px;
+            background:#fff;
+            border-radius:16px;
+            box-shadow:0 4px 20px rgba(0,0,0,0.08);
+            border:1px solid #f1f5f9;
+        ">
+            <span class="material-icons" style="font-size:48px; color:#cbd5e1;">inventory_2</span>
+            <h4 style="color:#64748b; margin-top:12px; font-weight:700;">No workshops available yet</h4>
+            <p style="color:#94a3b8; font-size:0.9rem; margin:6px 0 0;">Check back later for upcoming workshops</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if workshop_type.paginator.num_pages > 1 %}
+    <div style="display:flex; justify-content:center; align-items:center; gap:8px; margin-bottom:32px;">
+        {% if workshop_type.has_previous %}
+        <a href="?page={{ workshop_type.previous_page_number }}" style="
+            padding:8px 18px;
+            background:#fff;
+            border:1.5px solid #e2e8f0;
+            border-radius:8px;
+            color:#1a1a2e;
+            font-weight:600;
+            font-size:0.88rem;
+            text-decoration:none;
+        ">Previous</a>
+        {% endif %}
+
+        <span style="
+            padding:8px 18px;
+            background:linear-gradient(135deg,#f97316,#ea580c);
+            color:#fff;
+            border-radius:8px;
+            font-weight:700;
+            font-size:0.88rem;
+        ">Page {{ workshop_type.number }} of {{ workshop_type.paginator.num_pages }}</span>
+
+        {% if workshop_type.has_next %}
+        <a href="?page={{ workshop_type.next_page_number }}" style="
+            padding:8px 18px;
+            background:#fff;
+            border:1.5px solid #e2e8f0;
+            border-radius:8px;
+            color:#1a1a2e;
+            font-weight:600;
+            font-size:0.88rem;
+            text-decoration:none;
+        ">Next</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+</div>
+
+<style>
+    @media (max-width: 576px) {
+        .container { padding: 0 12px; }
+    }
+</style>
+
+{% endblock %}

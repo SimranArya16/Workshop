@@ -1,0 +1,193 @@
+{% extends 'workshop_app/base.html' %}
+
+{% block title %}Profile | FOSSEE Workshops{% endblock %}
+
+{% block content %}
+<div class="container">
+<div class="row justify-content-center">
+<div class="col-12 col-md-10 col-lg-8">
+
+{% if Workshops %}
+
+    <!-- Profile Card -->
+    <div style="background:#fff; border-radius:16px; box-shadow:0 4px 24px rgba(0,0,0,0.08); padding:32px; margin-bottom:24px;">
+        
+        <!-- Header -->
+        <div style="display:flex; align-items:center; gap:16px; margin-bottom:24px; flex-wrap:wrap;">
+            <div style="background:linear-gradient(135deg,#f97316,#ea580c); border-radius:50%; width:64px; height:64px; display:flex; align-items:center; justify-content:center;">
+                <span class="material-icons" style="color:#fff; font-size:32px">account_circle</span>
+            </div>
+            <div>
+                <h3 style="font-weight:700; color:#1a1a2e; margin:0">
+                    {{ coordinator_profile.user.first_name }} {{ coordinator_profile.user.last_name }}
+                </h3>
+                <p style="color:#64748b; margin:4px 0 0; font-size:0.9rem">
+                    {{ coordinator_profile.user.profile.position }} · {{ coordinator_profile.user.profile.institute }}
+                </p>
+            </div>
+            <a href="{% url 'workshop_app:edit_profile' %}" style="
+                margin-left:auto;
+                padding:8px 18px;
+                background:#f1f5f9;
+                color:#1a1a2e;
+                border-radius:8px;
+                font-weight:600;
+                font-size:0.88rem;
+                text-decoration:none;
+            "> Edit Profile</a>
+        </div>
+
+        <!-- Info Grid -->
+        <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(200px,1fr)); gap:16px;">
+
+            {% with fields=coordinator_profile.user %}
+            <div style="background:#f8fafc; border-radius:10px; padding:16px;">
+                <p style="color:#94a3b8; font-size:0.78rem; font-weight:600; margin:0 0 4px; text-transform:uppercase">Email</p>
+                <p style="color:#1a1a2e; font-weight:500; font-size:0.9rem; margin:0; word-break:break-all">{{ fields.email }}</p>
+            </div>
+            <div style="background:#f8fafc; border-radius:10px; padding:16px;">
+                <p style="color:#94a3b8; font-size:0.78rem; font-weight:600; margin:0 0 4px; text-transform:uppercase">Phone</p>
+                <p style="color:#1a1a2e; font-weight:500; font-size:0.9rem; margin:0">{{ fields.profile.phone_number }}</p>
+            </div>
+            <div style="background:#f8fafc; border-radius:10px; padding:16px;">
+                <p style="color:#94a3b8; font-size:0.78rem; font-weight:600; margin:0 0 4px; text-transform:uppercase">Department</p>
+                <p style="color:#1a1a2e; font-weight:500; font-size:0.9rem; margin:0">{{ fields.profile.department }}</p>
+            </div>
+            <div style="background:#f8fafc; border-radius:10px; padding:16px;">
+                <p style="color:#94a3b8; font-size:0.78rem; font-weight:600; margin:0 0 4px; text-transform:uppercase">Location</p>
+                <p style="color:#1a1a2e; font-weight:500; font-size:0.9rem; margin:0">{{ fields.profile.location }}</p>
+            </div>
+            {% endwith %}
+
+        </div>
+    </div>
+
+    <!-- Workshop Details -->
+    <div style="background:#fff; border-radius:16px; box-shadow:0 4px 24px rgba(0,0,0,0.08); padding:32px; margin-bottom:32px;">
+        <h4 style="font-weight:700; color:#1a1a2e; margin-bottom:20px">
+             Workshop History
+        </h4>
+
+        <!-- Mobile cards -->
+        <div style="display:flex; flex-direction:column; gap:12px;">
+        {% for workshop in Workshops %}
+            <div style="background:#f8fafc; border-radius:10px; padding:16px; border-left:4px solid {% if workshop.instructor %}#22c55e{% else %}#f97316{% endif %};">
+                <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+                    <div>
+                        <p style="font-weight:600; color:#1a1a2e; margin:0 0 4px">
+                            {{ workshop.workshop_type }}
+                        </p>
+                        <p style="color:#64748b; font-size:0.85rem; margin:0">
+                             {{ workshop.date }}
+                        </p>
+                    </div>
+                    <div>
+                        {% if workshop.instructor %}
+                            <span style="background:#dcfce7; color:#16a34a; padding:4px 12px; border-radius:20px; font-size:0.8rem; font-weight:600;">
+                                {{ workshop.instructor }}
+                            </span>
+                        {% else %}
+                            <span style="background:#fff7ed; color:#f97316; padding:4px 12px; border-radius:20px; font-size:0.8rem; font-weight:600;">
+                                Pending
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+
+{% else %}
+
+    <!-- Edit Profile Form -->
+    <div style="background:#fff; border-radius:16px; box-shadow:0 4px 24px rgba(0,0,0,0.08); padding:32px; margin-bottom:32px;">
+
+        <div class="text-center mb-4">
+            <span class="material-icons" style="font-size:48px; color:#f97316">manage_accounts</span>
+            <h3 style="font-weight:700; color:#1a1a2e; margin-top:8px">Complete Your Profile</h3>
+            <p style="color:#64748b; font-size:0.9rem">Fill in your details to get started</p>
+        </div>
+
+        {% if form.errors %}
+            {% for field in form %}
+                {% for error in field.errors %}
+                <div class="alert alert-danger" style="border-radius:8px; font-size:0.9rem">
+                    <i class="fa fa-exclamation-circle"></i> {{ field.label }}: {{ error|escape }}
+                </div>
+                {% endfor %}
+            {% endfor %}
+        {% endif %}
+
+        <form action="" method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group mb-3">
+                <label style="font-weight:600; color:#1a1a2e; font-size:0.9rem; display:block; margin-bottom:6px;">
+                    {{ field.label }}
+                    {% if field.field.required %}<span style="color:#ef4444">*</span>{% endif %}
+                </label>
+                {{ field }}
+                {% if field.errors %}
+                    {% for error in field.errors %}
+                    <small style="color:#ef4444; font-size:0.85rem">{{ error }}</small>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <div style="display:flex; gap:12px; margin-top:24px; flex-wrap:wrap;">
+                <button type="submit" style="
+                    flex:1;
+                    padding:12px;
+                    background:linear-gradient(135deg,#f97316,#ea580c);
+                    color:#fff;
+                    border:none;
+                    border-radius:8px;
+                    font-weight:600;
+                    font-size:1rem;
+                    cursor:pointer;
+                    min-width:120px;
+                "> Update</button>
+                <a href="{% url 'workshop_app:index' %}" style="
+                    flex:1;
+                    padding:12px;
+                    background:#f1f5f9;
+                    color:#1a1a2e;
+                    border-radius:8px;
+                    font-weight:600;
+                    font-size:1rem;
+                    text-decoration:none;
+                    text-align:center;
+                    min-width:120px;
+                ">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+{% endif %}
+</div>
+</div>
+</div>
+
+<style>
+input, select, textarea {
+    width:100%;
+    padding:10px 14px;
+    border:1.5px solid #e2e8f0;
+    border-radius:8px;
+    font-size:0.95rem;
+    color:#1a1a2e;
+    outline:none;
+    margin-top:4px;
+    background:#f8fafc;
+    transition:border-color 0.2s;
+}
+input:focus, select:focus, textarea:focus {
+    border-color:#f97316;
+    box-shadow:0 0 0 3px rgba(249,115,22,0.15);
+    background:#fff;
+}
+</style>
+
+{% endblock %}

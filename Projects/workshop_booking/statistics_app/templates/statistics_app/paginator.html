@@ -1,0 +1,30 @@
+<div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+
+    {% if objects.has_previous %}
+    <a href="?page=1{% if request.GET.from_date %}&from_date={{ request.GET.from_date }}{% endif %}{% if request.GET.to_date %}&to_date={{ request.GET.to_date }}{% endif %}{% if request.GET.state %}&state={{ request.GET.state }}{% endif %}{% if request.GET.workshop_type %}&workshop_type={{ request.GET.workshop_type }}{% endif %}{% if request.GET.show_workshops %}&show_workshops={{ request.GET.show_workshops }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}"
+       style="padding:6px 12px; background:#f1f5f9; color:#1a1a2e; border-radius:6px; font-size:0.85rem; font-weight:600; text-decoration:none; border:1px solid #e2e8f0;">
+        «
+    </a>
+    {% endif %}
+
+    {% for n in objects.paginator.page_range %}
+        {% if objects.number == n %}
+            <span style="padding:6px 12px; background:#f97316; color:#fff; border-radius:6px; font-size:0.85rem; font-weight:700;">
+                {{ n }}
+            </span>
+        {% elif n > objects.number|add:'-5' and n < objects.number|add:'5' %}
+            <a href="?page={{ n }}{% if request.GET.from_date %}&from_date={{ request.GET.from_date }}{% endif %}{% if request.GET.to_date %}&to_date={{ request.GET.to_date }}{% endif %}{% if request.GET.state %}&state={{ request.GET.state }}{% endif %}{% if request.GET.workshop_type %}&workshop_type={{ request.GET.workshop_type }}{% endif %}{% if request.GET.show_workshops %}&show_workshops={{ request.GET.show_workshops }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}"
+               style="padding:6px 12px; background:#f1f5f9; color:#1a1a2e; border-radius:6px; font-size:0.85rem; font-weight:600; text-decoration:none; border:1px solid #e2e8f0;">
+                {{ n }}
+            </a>
+        {% endif %}
+    {% endfor %}
+
+    {% if objects.has_next %}
+    <a href="?page={{ objects.paginator.num_pages }}{% if request.GET.from_date %}&from_date={{ request.GET.from_date }}{% endif %}{% if request.GET.to_date %}&to_date={{ request.GET.to_date }}{% endif %}{% if request.GET.state %}&state={{ request.GET.state }}{% endif %}{% if request.GET.workshop_type %}&workshop_type={{ request.GET.workshop_type }}{% endif %}{% if request.GET.show_workshops %}&show_workshops={{ request.GET.show_workshops }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}"
+       style="padding:6px 12px; background:#f1f5f9; color:#1a1a2e; border-radius:6px; font-size:0.85rem; font-weight:600; text-decoration:none; border:1px solid #e2e8f0;">
+        »
+    </a>
+    {% endif %}
+
+</div>

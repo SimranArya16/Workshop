@@ -1,0 +1,119 @@
+{% extends 'workshop_app/base.html' %}
+
+{% block title %}Team Statistics | FOSSEE Workshops{% endblock %}
+
+{% block content %}
+<div class="container-fluid" style="padding:0 24px;">
+
+    <!-- Page Header -->
+    <div style="margin-bottom:28px;">
+        <h2 style="font-weight:800; color:#1a1a2e; margin:0;">Team Statistics</h2>
+        <p style="color:#64748b; font-size:0.95rem; margin:6px 0 0;">Workshop counts by team members</p>
+    </div>
+
+    <div style="display:flex; gap:24px; align-items:flex-start; flex-wrap:wrap;">
+
+        <!-- Teams Sidebar -->
+        <div style="width:200px; min-width:160px; flex-shrink:0;">
+            <div style="background:#fff; border-radius:16px; box-shadow:0 4px 24px rgba(0,0,0,0.08); overflow:hidden;">
+
+                <div style="background:linear-gradient(135deg,#1a1a2e,#16213e); padding:14px 18px;">
+                    <h6 style="color:#fff; font-weight:700; margin:0; font-size:0.9rem;">All Teams</h6>
+                </div>
+
+                <div style="padding:12px;">
+                    {% for team in all_teams %}
+                    <a href="{% url 'statistics_app:team' team.id %}" style="
+                        display:block;
+                        padding:10px 14px;
+                        border-radius:8px;
+                        text-decoration:none;
+                        font-weight:600;
+                        font-size:0.88rem;
+                        margin-bottom:4px;
+                        {% if selected_team and selected_team.id == team.id %}
+                        background:linear-gradient(135deg,#f97316,#ea580c);
+                        color:#fff;
+                        {% else %}
+                        background:#f8fafc;
+                        color:#1a1a2e;
+                        {% endif %}
+                        transition:background 0.2s;
+                    ">
+                        Team {{ forloop.counter }}
+                    </a>
+                    {% empty %}
+                    <p style="color:#94a3b8; font-size:0.88rem; padding:10px; margin:0;">No teams found.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart Area -->
+        <div style="flex:1; min-width:0;">
+            <div style="background:#fff; border-radius:16px; box-shadow:0 4px 24px rgba(0,0,0,0.08); padding:28px;">
+
+                {% if team_labels %}
+                <div style="margin-bottom:20px;">
+                    <h5 style="font-weight:700; color:#1a1a2e; margin:0;">Workshop Distribution</h5>
+                    <p style="color:#64748b; font-size:0.88rem; margin:4px 0 0;">Number of workshops per team member</p>
+                </div>
+                <canvas id="myChart" style="max-height:400px;"></canvas>
+                {% else %}
+                <div style="text-align:center; padding:60px 20px;">
+                    <span class="material-icons" style="font-size:48px; color:#cbd5e1; display:block; margin-bottom:12px;">bar_chart</span>
+                    <p style="color:#94a3b8; font-size:1rem; margin:0; font-weight:500;">Select a team to view statistics</p>
+                    <p style="color:#cbd5e1; font-size:0.88rem; margin:6px 0 0;">Click on any team from the sidebar</p>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    {% if team_labels %}
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: {{ team_labels|safe }},
+            datasets: [{
+                data: {{ ws_count|safe }},
+                label: "Team Members Workshops",
+                backgroundColor: 'rgba(249, 115, 22, 0.7)',
+                borderColor: 'rgb(249, 115, 22)',
+                borderWidth: 2,
+                borderRadius: 6,
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                }
+            },
+            scales: {
+                yAxes: [{
+                    ticks: { beginAtZero: true }
+                }]
+            }
+        }
+    });
+    {% endif %}
+</script>
+
+<style>
+@media (max-width: 768px) {
+    div[style*="width:200px"] {
+        width: 100% !important;
+        min-width: unset !important;
+    }
+}
+</style>
+
+{% endblock %}

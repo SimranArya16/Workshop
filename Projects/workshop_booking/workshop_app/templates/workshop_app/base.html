@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+{% load custom_filters %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="FOSSEE Workshops - Book and manage workshops by IIT Bombay">
+    <title>{% block title %}FOSSEE Workshops{% endblock %}</title>
+
+    <script src="{% static 'workshop_app/js/jquery-3.4.1.min.js' %}"></script>
+    <script src="{% static 'workshop_app/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'workshop_app/js/popper.min.js' %}"></script>
+    <script src="{% static 'workshop_app/js/toastr.min.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+    {% block extra-dependencies %}{% endblock %}
+
+    <link rel="stylesheet" href="{% static 'workshop_app/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'workshop_app/css/toastr.min.css' %}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'workshop_app/css/base.css' %}" type="text/css"/>
+    <link rel="stylesheet" href="{% static 'workshop_app/css/font-awesome.css' %}" type="text/css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+
+    {% block extra-custom-scripts %}{% endblock %}
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f7fa;
+            color: #1a1a2e;
+            padding-top: 64px;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%) !important;
+            padding: 0 24px;
+            height: 64px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+        }
+
+        .navbar-brand {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #ffffff !important;
+            letter-spacing: 0.5px;
+        }
+
+        .navbar-brand span {
+            color: #f97316;
+        }
+
+        .nav-link {
+            color: #ffffff !important;
+            font-size: 0.95rem;
+            font-weight: 500;
+            padding: 8px 14px !important;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover {
+            color: #f97316 !important;
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        .nav-link.active-nav {
+            color: #f97316 !important;
+            background-color: rgba(249,115,22,0.15);
+            font-weight: 600;
+        }
+
+        .navbar-toggler {
+            border: 1px solid rgba(255,255,255,0.4);
+            padding: 5px 9px;
+        }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255,255,255,1)' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        .dropdown-menu {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            padding: 8px;
+            min-width: 180px;
+        }
+
+        .dropdown-item {
+            border-radius: 6px;
+            padding: 8px 14px;
+            font-size: 0.9rem;
+            color: #1a1a2e;
+            transition: background 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f1f5f9;
+            color: #f97316;
+        }
+
+        .base-content {
+            min-height: calc(100vh - 64px - 60px);
+            padding: 32px 16px;
+        }
+
+        .footer {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #94a3b8;
+            text-align: center;
+            padding: 18px 16px;
+            font-size: 0.9rem;
+            height: 60px;
+        }
+
+        .footer a {
+            color: #f97316;
+            text-decoration: none;
+        }
+
+        @media (max-width: 992px) {
+            .navbar {
+                height: auto;
+                padding: 12px 16px;
+            }
+
+            .base-content {
+                padding: 20px 12px;
+            }
+
+            .navbar-collapse {
+                background: #16213e;
+                border-radius: 10px;
+                padding: 12px;
+                position: absolute;
+                top: 60px;
+                left: 0;
+                right: 0;
+                z-index: 9999;
+                box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+                margin-top: 4px;
+            }
+
+            .nav-link {
+                color: #ffffff !important;
+                padding: 12px 16px !important;
+                border-bottom: 1px solid rgba(255,255,255,0.08);
+                border-radius: 0;
+                font-size: 0.95rem;
+                display: block;
+            }
+
+            .nav-link:hover {
+                color: #f97316 !important;
+                background: rgba(255,255,255,0.06);
+            }
+
+            .dropdown-menu {
+                background: #1e2d45;
+                border-radius: 8px;
+                margin-top: 4px;
+            }
+
+            .dropdown-item {
+                color: #ffffff;
+            }
+
+            .dropdown-item:hover {
+                background: rgba(255,255,255,0.08);
+                color: #f97316;
+            }
+        }
+    </style>
+</head>
+
+<body>
+{% block header %}
+    <nav class="navbar navbar-dark navbar-expand-lg fixed-top">
+        {% if user.is_authenticated %}
+        <a class="navbar-brand" href="{% url 'workshop_app:index' %}">
+            FOSSEE <span>Workshops</span>
+        </a>
+        {% else %}
+        <a class="navbar-brand" href="{{request.scheme}}://{{request.get_host}}">
+            FOSSEE <span>Workshops</span>
+        </a>
+        {% endif %}
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse"
+                data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" id="nav-home" href="{% url 'workshop_app:index' %}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="nav-stats" href="{% url 'statistics_app:public' %}">
+                        Workshop Statistics
+                    </a>
+                </li>
+                {% if user.is_authenticated %}
+                    {% if request.user|has_group:"instructor" %}
+                    <li class="nav-item">
+                        <a class="nav-link" id="nav-team" href="{% url 'statistics_app:team' %}">
+                            Team Statistics
+                        </a>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" id="nav-status" href="{% url 'workshop_app:workshop_status_instructor' %}">
+                            Workshop Status
+                        </a>
+                    </li>
+                    {% if not request.user|has_group:"instructor" %}
+                    <li class="nav-item">
+                        <a class="nav-link" id="nav-propose" href="{% url 'workshop_app:propose_workshop' %}">
+                            Propose Workshop
+                        </a>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" id="nav-types" href="{% url 'workshop_app:workshop_type_list' %}">
+                            Workshop Types
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+
+            {% if user.is_authenticated %}
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+                       role="button" data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">
+                        <span class="material-icons" style="vertical-align:middle; font-size:20px;">
+                            account_circle
+                        </span>
+                        <span style="vertical-align:middle; margin-left:4px;">
+                            {{user.get_full_name|title}}
+                        </span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a class="dropdown-item" href="{% url 'workshop_app:view_own_profile' %}">
+                            Profile
+                        </a>
+                        <a class="dropdown-item" href="{% url 'password_change' %}">
+                            Change Password
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{% url 'workshop_app:logout' %}">
+                            Logout
+                        </a>
+                    </div>
+                </li>
+            </ul>
+            {% endif %}
+        </div>
+    </nav>
+{% endblock %}
+
+<div class="base-content">
+    {% block content %}
+        <h1>Base Template Content. Please override me</h1>
+    {% endblock %}
+</div>
+
+<script>
+    {% if messages %}
+        {% for message in messages %}
+            toastr[{% if message.tags %}"{{ message.tags }}"{% else %}"info"{% endif %}]("{{ message }}");
+        {% endfor %}
+    {% endif %}
+</script>
+
+<script>
+    (function () {
+        var path = window.location.pathname;
+
+        var rules = [
+            { id: 'nav-home',    patterns: ['/workshop$', '/workshop/$', '/workshop/status$', '/workshop/dashboard$'] },
+            { id: 'nav-stats',   patterns: ['/statistics'] },
+            { id: 'nav-status',  patterns: ['/workshop/dashboard', '/workshop/status'] },
+            { id: 'nav-propose', patterns: ['/workshop/propose'] },
+            { id: 'nav-types',   patterns: ['/workshop/types'] },
+            { id: 'nav-team',    patterns: ['/statistics/team'] },
+        ];
+
+        rules.forEach(function (rule) {
+            var el = document.getElementById(rule.id);
+            if (!el) return;
+            rule.patterns.forEach(function (pattern) {
+                var re = new RegExp(pattern);
+                if (re.test(path)) {
+                    el.classList.add('active-nav');
+                }
+            });
+        });
+    })();
+</script>
+
+</body>
+
+<footer class="footer">
+    {% block footer %}
+        <div class="container">
+            Developed by <a href="https://fossee.in" target="_blank">FOSSEE group</a>, IIT Bombay
+        </div>
+    {% endblock %}
+</footer>
+</html>

@@ -1,0 +1,86 @@
+/* ── Navbar ── */
+.navbar {
+    z-index: 1000;
+}
+
+/* ── Footer ── */
+.footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    color: #94a3b8;
+    text-align: center;
+    z-index: 100;
+    padding: 16px;
+    font-size: 0.95rem;
+}
+
+/* ── Base Content ── */
+.base-content {
+    padding-top: 80px;
+    padding-bottom: 80px;
+}
+
+/* ── Global Font Sizes ── */
+body {
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+h1 { font-size: 2rem; }
+h2 { font-size: 1.6rem; }
+h3 { font-size: 1.4rem; }
+h4 { font-size: 1.2rem; }
+h5 { font-size: 1.05rem; }
+h6 { font-size: 0.95rem; }
+
+p, li, td, th, label, input, select, textarea {
+    font-size: 1rem;
+}
+
+/* ── Mobile Font Fix ── */
+@media (max-width: 768px) {
+    body {
+        font-size: 15px;
+    }
+
+    h1 { font-size: 1.6rem; }
+    h2 { font-size: 1.4rem; }
+    h3 { font-size: 1.2rem; }
+    h4 { font-size: 1.1rem; }
+    h5 { font-size: 1rem; }
+
+    p, li, td, th, label {
+        font-size: 0.95rem;
+    }
+
+    input, select, textarea {
+        font-size: 1rem !important;
+    }
+
+    .base-content {
+        padding-top: 70px;
+        padding-bottom: 70px;
+    }
+
+    .container {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        font-size: 14px;
+    }
+
+    h1 { font-size: 1.4rem; }
+    h2 { font-size: 1.2rem; }
+    h3 { font-size: 1.1rem; }
+
+    .base-content {
+        padding-top: 65px;
+        padding-bottom: 65px;
+    }
+}
